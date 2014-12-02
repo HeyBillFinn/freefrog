@@ -17,46 +17,15 @@
 ; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
-(ns freefrog.rest-spec
+(ns freefrog.governance-rest-spec
   (:require [speclj.core :refer :all]
             [clj-json.core :as json]
             [clj-http.client :as http-client]
-            [freefrog.rest :as r]
+            [freefrog.rest-spec-helpers :as helpers]
             [freefrog.persistence :as p])
   (:use [ring.adapter.jetty])
   (:import [javax.persistence EntityNotFoundException]
            [org.apache.http HttpStatus]))
-
-(def test-server (ref nil))
-
-(defn start-test-server []
-  (when-not @test-server
-    (dosync
-      (ref-set test-server (run-jetty #'r/handler {:port 3000 :join? false}))))
-  (.start @test-server))
-
-(defn stop-test-server []
-  (.stop @test-server))
-
-(def host-url "http://localhost:3000")
-
-(def http-request-fns
-  {:get http-client/get 
-   :put http-client/put 
-   :post http-client/post})
-
-(defn http-request 
-  ([method uri]
-   (http-request method uri nil))
-  ([method uri options]
-   (apply (get http-request-fns method) 
-          [(str host-url uri) 
-           (merge {:throw-exceptions false
-                   :content-type "text/plain"
-                   :body ""} options)])))
-
-(defn get-location [response]
-  (get (:headers response) "Location"))
 
 (def sample-gov-log {:body "Add role\nRename accountability."})
 
@@ -66,21 +35,9 @@
 (defn govt-meeting-not-found-thrower [& args]
   (throw (EntityNotFoundException. "Governance meeting does not exist")))
 
-(defmacro it-responds-with-status [expected-status response]
-  `(it "should return the right response code"
-    (should= ~expected-status (:status ~response))))
-
-(defmacro it-responds-with-body [expected-body response]
-  `(it "should contain the appropriate body"
-    (should= ~expected-body (:body ~response))))
-
-(defmacro it-responds-with-body-containing [expected-body response]
-  `(it "should contain the appropriate body"
-    (should-contain ~expected-body (:body ~response))))
-
 (describe "governance rest api"
-  (before-all (start-test-server))
-  (after-all (stop-test-server))
+  (before-all (helpers/start-test-server))
+  (after-all (helpers/stop-test-server))
 
   (context "with a non-existent circle"
     (around [it]
@@ -91,23 +48,23 @@
         (it)))
 
     (context "requesting the governance endpoint"
-      (with response (http-request :get "/circles/1234/governance"))
+      (with response (helpers/http-request :get "/circles/1234/governance"))
 
-      (it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
-      (it-responds-with-body "Circle does not exist" @response))
+      (helpers/it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
+      (helpers/it-responds-with-body "Circle does not exist" @response))
 
     (context "posting to the governance endpoint"
-      (with response (http-request :post "/circles/1234/governance"))
+      (with response (helpers/http-request :post "/circles/1234/governance"))
 
-      (it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
-      (it-responds-with-body "Circle does not exist" @response))
+      (helpers/it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
+      (helpers/it-responds-with-body "Circle does not exist" @response))
 
     (context "putting to the agenda endpoint"
-      (with response (http-request :put 
+      (with response (helpers/http-request :put 
                                    "/circles/1234/governance/5678/agenda"
                                    {:body "New agenda"}))
-      (it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
-      (it-responds-with-body "Circle does not exist" @response)))
+      (helpers/it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
+      (helpers/it-responds-with-body "Circle does not exist" @response)))
 
   (context "with a circle"
     (around [it]
@@ -116,26 +73,26 @@
         (it)))
 
     (context "requesting the governance endpoint"
-      (with response (http-request :get "/circles/1234/governance"))
+      (with response (helpers/http-request :get "/circles/1234/governance"))
 
-      (it-responds-with-status HttpStatus/SC_OK @response)
-      (it-responds-with-body (json/generate-string sample-gov-log)
+      (helpers/it-responds-with-status HttpStatus/SC_OK @response)
+      (helpers/it-responds-with-body (json/generate-string sample-gov-log)
                                         @response))
 
     (context "posting to the governance endpoint with application/json"
-      (with response (http-request :post 
+      (with response (helpers/http-request :post 
                                    "/circles/1234/governance" 
                                    {:content-type "application/json"}))
       (it "should not respond to application/json"
         (should= HttpStatus/SC_UNSUPPORTED_MEDIA_TYPE (:status @response))))
 
     (context "posting to the governance endpoint"
-      (with response (http-request :post "/circles/1234/governance"))
+      (with response (helpers/http-request :post "/circles/1234/governance"))
 
-      (it-responds-with-status HttpStatus/SC_CREATED @response)
+      (helpers/it-responds-with-status HttpStatus/SC_CREATED @response)
       (it "should return the location of the newly created governance log"
-        (should= (str host-url "/circles/1234/governance/5678") 
-                 (get-location @response))))
+        (should= (str helpers/host-url "/circles/1234/governance/5678") 
+                 (helpers/get-location @response))))
 
     (context "with a non-existent governance endpoint"
       (around [it]
@@ -143,11 +100,11 @@
           (it)))
 
       (context "putting to the agenda endpoint"
-        (with response (http-request :put 
+        (with response (helpers/http-request :put 
                                      "/circles/1234/governance/5678/agenda"
                                      {:body "New agenda"}))
-        (it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
-        (it-responds-with-body "Governance meeting does not exist" 
+        (helpers/it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
+        (helpers/it-responds-with-body "Governance meeting does not exist" 
                                           @response)))
 
     (context "with an existing governance endpoint"
@@ -157,26 +114,26 @@
             (it)))
 
         (context "putting to the agenda endpoint with an unsupported media type"
-          (with response (http-request :put
+          (with response (helpers/http-request :put
                                        "/circles/1234/governance/5678/agenda"
                                        {:body "New agenda"
                                         :content-type "application/json"}))
-          (it-responds-with-status 415 @response))
+          (helpers/it-responds-with-status 415 @response))
 
         (context "putting to the agenda endpoint"
-          (with response (http-request :put
+          (with response (helpers/http-request :put
                                        "/circles/1234/governance/5678/agenda"
                                        {:body "New agenda"}))
 
-          (it-responds-with-status HttpStatus/SC_CREATED @response)
+          (helpers/it-responds-with-status HttpStatus/SC_CREATED @response)
           (it "should return the location of the newly created governance log"
-            (should= (str host-url "/circles/1234/governance/5678/agenda") 
-                     (get-location @response))))
+            (should= (str helpers/host-url "/circles/1234/governance/5678/agenda") 
+                     (helpers/get-location @response))))
 
         (context "getting the agenda endpoint"
-          (with response (http-request :get "/circles/1234/governance/5678/agenda"))
-          (it-responds-with-status HttpStatus/SC_OK @response)
-          (it-responds-with-body "" @response)
+          (with response (helpers/http-request :get "/circles/1234/governance/5678/agenda"))
+          (helpers/it-responds-with-status HttpStatus/SC_OK @response)
+          (helpers/it-responds-with-body "" @response)
           (it "should return an empty agenda"
             (should-contain "text/plain" (get-in @response
                                                  [:headers "Content-Type"])))))
@@ -187,28 +144,28 @@
             (it)))
 
         (context "getting the governance resource"
-          (with response (http-request :get "/circles/1234/governance/5678"))
-          (it-responds-with-status HttpStatus/SC_OK @response)
+          (with response (helpers/http-request :get "/circles/1234/governance/5678"))
+          (helpers/it-responds-with-status HttpStatus/SC_OK @response)
           (it "should return that an open meeting exists"
             (should-contain "true" (get-in @response
                                            [:headers "Open-Meeting"]))))
 
         (context "putting to the governance resource"
-          (with response (http-request :put "/circles/1234/governance/5678"))
+          (with response (helpers/http-request :put "/circles/1234/governance/5678"))
           ;(xit "should persist a closed governance log")
-          (it-responds-with-status HttpStatus/SC_NO_CONTENT @response))
+          (helpers/it-responds-with-status HttpStatus/SC_NO_CONTENT @response))
 
         (context "putting to the agenda endpoint"
-          (with response (http-request :put 
+          (with response (helpers/http-request :put 
                                        "/circles/1234/governance/5678/agenda"
                                        {:body "New agenda"}))
 
-          (it-responds-with-status HttpStatus/SC_NO_CONTENT @response))
+          (helpers/it-responds-with-status HttpStatus/SC_NO_CONTENT @response))
 
         (context "getting the agenda endpoint"
-          (with response (http-request :get "/circles/1234/governance/5678/agenda"))
-          (it-responds-with-status HttpStatus/SC_OK @response)
-          (it-responds-with-body "Current agenda" @response)
+          (with response (helpers/http-request :get "/circles/1234/governance/5678/agenda"))
+          (helpers/it-responds-with-status HttpStatus/SC_OK @response)
+          (helpers/it-responds-with-body "Current agenda" @response)
           (it "should return the contents of the existing, open agenda"
             (should-contain "text/plain" (get-in @response
                                                  [:headers "Content-Type"])))))
@@ -220,26 +177,26 @@
             (it)))
 
         (context "getting the governance resource"
-          (with response (http-request :get "/circles/1234/governance/5678"))
-          (it-responds-with-status HttpStatus/SC_OK @response)
-          (it-responds-with-body-containing "{\"agenda\":\"Current closed agenda\"" 
+          (with response (helpers/http-request :get "/circles/1234/governance/5678"))
+          (helpers/it-responds-with-status HttpStatus/SC_OK @response)
+          (helpers/it-responds-with-body-containing "{\"agenda\":\"Current closed agenda\"" 
                                             @response))
 
         (context "putting to the governance resource"
-          (with response (http-request :put "/circles/1234/governance/5678"))
-          (it-responds-with-status HttpStatus/SC_NO_CONTENT @response))
+          (with response (helpers/http-request :put "/circles/1234/governance/5678"))
+          (helpers/it-responds-with-status HttpStatus/SC_NO_CONTENT @response))
 
         (context "putting to the agenda endpoint"
-          (with response (http-request :put
+          (with response (helpers/http-request :put
                                        "/circles/1234/governance/5678/agenda"
                                        {:body "New agenda"}))
 
-          (it-responds-with-status HttpStatus/SC_BAD_REQUEST @response)
-          (it-responds-with-body "Agenda is closed." @response))
+          (helpers/it-responds-with-status HttpStatus/SC_BAD_REQUEST @response)
+          (helpers/it-responds-with-body "Agenda is closed." @response))
 
         (context "getting the agenda endpoint"
-          (with response (http-request :get "/circles/1234/governance/5678/agenda"))
-          (it-responds-with-status HttpStatus/SC_BAD_REQUEST @response)
-          (it-responds-with-body "Agenda is closed." @response))))))
+          (with response (helpers/http-request :get "/circles/1234/governance/5678/agenda"))
+          (helpers/it-responds-with-status HttpStatus/SC_BAD_REQUEST @response)
+          (helpers/it-responds-with-body "Agenda is closed." @response))))))
 
 (run-specs)
