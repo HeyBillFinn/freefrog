@@ -38,3 +38,8 @@
   "Return a collection of all of the governance logs for the circle. Throws
   EntityNotFoundException if the circle does not exist."
   [circle-id])
+
+(defn new-user 
+  "Creates a new user using the given input user data. Returns the unique ID of
+  this newly created governance log."
+  [user-data])

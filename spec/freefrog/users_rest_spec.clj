@@ -67,11 +67,16 @@
       (helpers/it-responds-with-body-containing "Illegal arguments" @response))
 
     (context "with a username and password"
+      (around [it]
+        (with-redefs [p/new-user (fn [& args] 1234)]
+          (it)))
       (with response (helpers/http-request :post "/users"
                                            {:content-type "application/json"
                                             :body (json/generate-string sample-user)}))
       (helpers/it-responds-with-status HttpStatus/SC_CREATED @response)
-      (xit "returns the location"))))
+      (it "returns the location of the newly created resource"
+        (should= (str helpers/host-url "/users/1234") 
+                 (helpers/get-location @response))))))
 ;
 ;  (context "with a circle"
 ;    (around [it]

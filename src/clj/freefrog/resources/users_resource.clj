@@ -27,7 +27,7 @@
   (:import [org.apache.http HttpStatus]))
 
 (defn new-user [ctx]
-  (u/create-user (:parsed-json-body ctx)))
+  {::new-user-id (p/new-user (u/create-user (:parsed-json-body ctx)))})
 
 (defresource specific-users-resource [user-id]
   util/base-resource
@@ -46,6 +46,7 @@
   :known-content-type? #(util/check-content-type % ["application/json"])
   :allowed-methods [:post]
   :post! #(new-user %)
+  :location #(util/build-entry-url (:request %) (::new-user-id %))
   )
   ;:post! (fn [_] (new-governance-log circle-id))
   ;:exists? (fn [_] (get-governance-logs circle-id))
