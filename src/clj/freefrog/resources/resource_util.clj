@@ -67,9 +67,14 @@
 
 (defn handle-exception [ctx]
   (let [exception (:exception ctx)]
-    (when (= (type exception)
-             javax.persistence.EntityNotFoundException)
-      (ring-response {:status HttpStatus/SC_NOT_FOUND 
+    (condp = (type exception)
+      javax.persistence.EntityNotFoundException (ring-response 
+                                                  {:status HttpStatus/SC_NOT_FOUND 
+                                                   :body (.getMessage exception)})
+      java.lang.IllegalArgumentException (ring-response 
+                                           {:status HttpStatus/SC_BAD_REQUEST 
+                                            :body (.getMessage exception)})
+      (ring-response {:status HttpStatus/SC_INTERNAL_SERVER_ERROR 
                       :body (.getMessage exception)}))))
 
 (def base-resource

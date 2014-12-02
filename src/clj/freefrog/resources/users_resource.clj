@@ -27,7 +27,7 @@
   (:import [org.apache.http HttpStatus]))
 
 (defn new-user [ctx]
-  (u/create-user [(:parsed-json-body ctx)]))
+  (u/create-user (:parsed-json-body ctx)))
 
 (defresource specific-users-resource [user-id]
   util/base-resource

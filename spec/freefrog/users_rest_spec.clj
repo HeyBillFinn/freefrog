@@ -29,7 +29,7 @@
 (def sample-user {:username "bfinn"
                   :password "abcd1234"})
 
-(defn illegal-arg-thrower [% args]
+(defn illegal-arg-thrower [& args]
   (throw (IllegalArgumentException. "Illegal arguments")))
 
 (describe "users rest api"
@@ -63,13 +63,15 @@
       (with response (helpers/http-request :post "/users"
                                            {:content-type "application/json"
                                             :body (json/generate-string sample-user)}))
-      (helpers/it-responds-with-status HttpStatus/SC_CREATED @response))
+      (helpers/it-responds-with-status HttpStatus/SC_BAD_REQUEST @response)
+      (helpers/it-responds-with-body-containing "Illegal arguments" @response))
 
     (context "with a username and password"
       (with response (helpers/http-request :post "/users"
                                            {:content-type "application/json"
                                             :body (json/generate-string sample-user)}))
-      (helpers/it-responds-with-status HttpStatus/SC_CREATED @response))))
+      (helpers/it-responds-with-status HttpStatus/SC_CREATED @response)
+      (xit "returns the location"))))
 ;
 ;  (context "with a circle"
 ;    (around [it]
