@@ -114,7 +114,8 @@
         (context "putting to the agenda endpoint with an unsupported media type"
           (with response (helpers/http-request :put
                                        "/circles/1234/governance/5678/agenda"
-                                       {:body "New agenda"
+                                       {:body (json/generate-string 
+                                                {:agenda "New agenda"})
                                         :content-type "application/json"}))
           (helpers/it-responds-with-status 415 @response))
 

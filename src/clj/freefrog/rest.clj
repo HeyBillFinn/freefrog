@@ -20,6 +20,7 @@
 (ns freefrog.rest
   (:require [liberator.dev]
             [freefrog.resources.governance_resource :as gr]
+            [freefrog.resources.users_resource :as ur]
             [compojure.route :as route]
             [compojure.core :refer [defroutes ANY GET]]))
 
@@ -30,6 +31,7 @@
        (gr/specific-governance-resource circle-id log-id))
   (ANY "/circles/:circle-id/governance/:log-id/agenda" [circle-id log-id]
        (gr/governance-agenda-resource circle-id log-id))
+  (ANY "/users" [] (ur/general-users-resource))
   ;;TODO
   ;(ANY "/circles/:circle-id/governance/:log-id/current" [circle-id log-id]
        ;(governance-current-resource circle-id log-id))

@@ -19,6 +19,8 @@
 
 (ns freefrog.resources.resource_util
   (:require [liberator.representation :refer [ring-response]]
+            [clojure.java.io :as io]
+            [clj-json.core :as json]
             [liberator.core :refer [resource defresource]])
   (:import [java.net URL]
            [org.apache.http HttpStatus]))
@@ -31,6 +33,23 @@
     (or (some #{(get-in ctx [:request :headers "content-type"])} content-types)
         [false {:message "Unsupported Content-Type"}])
     true))
+
+(defn body-as-string [ctx]
+  (if-let [body (get-in ctx [:request :body])]
+    (condp instance? body
+      java.lang.String body
+      (slurp (io/reader body)))))
+
+(defn malformed-json? [ctx]
+  (when (and (put-or-post? ctx) 
+             (= "application/json" (get-in ctx [:request :content-type])))
+    (try
+      (if-let [body (body-as-string ctx)]
+        (let [data (json/parse-string body)]
+          [false {:parsed-json-body data}])
+        [true {:message "No body"}])
+      (catch Exception e
+        [true {:message (format "IOException: %s" (.getMessage e))}]))))
 
 (defn build-entry-url
   ([request]
@@ -56,5 +75,6 @@
 (def base-resource
   {:known-content-type? #(check-content-type % ["text/plain"])
    :handle-created #(validate-context %)
+   :malformed? #(malformed-json? %)
    :handle-no-content #(validate-context %)
    :handle-exception #(handle-exception %)})
