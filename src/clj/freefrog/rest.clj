@@ -18,8 +18,7 @@
 ;
 
 (ns freefrog.rest
-  (:require [liberator.core :refer [resource defresource]]
-            [liberator.dev]
+  (:require [liberator.dev]
             [freefrog.resources.governance_resource :as gr]
             [compojure.route :as route]
             [compojure.core :refer [defroutes ANY GET]]))

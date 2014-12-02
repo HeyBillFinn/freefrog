@@ -23,7 +23,8 @@
             [liberator.core :refer [resource defresource]]
             [clj-json.core :as json]
             [freefrog.governance-logs :as gl]
-            [freefrog.persistence :as p]))
+            [freefrog.persistence :as p])
+  (:import [org.apache.http HttpStatus]))
 
 (defn new-governance-log [circle-id]
   {::new-governance-log-id (p/new-governance-log 
@@ -52,39 +53,36 @@
       {:failed "Agenda is closed."})))
 
 (defresource governance-agenda-resource [circle-id log-id]
+  util/base-resource 
   :allowed-methods [:get :put]
-  :known-content-type? #(util/check-content-type % ["text/plain"])
   :exists? (fn [_] (get-governance-log circle-id log-id))
   :new? #(nil? (:agenda (::governance-log %)))
   :put! #(put-governance-log-agenda circle-id log-id %)
   :handle-ok #(if (:is-open? (::governance-log %))
-                (ring-response {:status 200 
+                (ring-response {:status HttpStatus/SC_OK 
                                 :headers {"Content-Type" "text/plain"}
                                 :body (str (:agenda (::governance-log %)))})
-                (ring-response {:status 400 :body "Agenda is closed."}))
-  :handle-created #(util/validate-context %)
-  :handle-no-content #(util/validate-context %)
-  :handle-exception #(util/handle-exception %)
+                (ring-response {:status HttpStatus/SC_BAD_REQUEST 
+                                :body "Agenda is closed."}))
   :location #(util/build-entry-url (:request %)))
 
 (defresource specific-governance-resource [circle-id log-id]
+  util/base-resource 
   :allowed-methods [:put :get]
   :known-content-type? #(util/check-content-type % ["text/plain"])
   :exists? (fn [_] (get-governance-log circle-id log-id))
   :new? #(nil? (::governance-log %))
   :put! #(put-governance-log circle-id log-id %)
   :handle-ok #(if (:is-open? (::governance-log %))
-                (ring-response {:status 200 :headers {"Open-Meeting" "true"}})
-                (json/generate-string (::governance-log %)))
-  :handle-exception #(util/handle-exception %)
-  :handle-no-content #(util/validate-context %))
+                (ring-response {:status HttpStatus/SC_OK 
+                                :headers {"Open-Meeting" "true"}})
+                (json/generate-string (::governance-log %))))
 
 (defresource general-governance-resource [circle-id]
+  util/base-resource 
   :allowed-methods [:get :post]
   :known-content-type? #(util/check-content-type % ["text/plain"])
   :post! (fn [_] (new-governance-log circle-id))
   :exists? (fn [_] (get-governance-logs circle-id))
   :handle-ok #(json/generate-string (::governance-logs %))
-  :handle-created #(util/validate-context %)
-  :handle-exception #(util/handle-exception %)
   :location #(util/build-entry-url (:request %) (::new-governance-log-id %)))

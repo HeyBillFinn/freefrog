@@ -18,8 +18,10 @@
 ;
 
 (ns freefrog.resources.resource_util
-  (:require [liberator.representation :refer [ring-response]])
-  (:import java.net.URL))
+  (:require [liberator.representation :refer [ring-response]]
+            [liberator.core :refer [resource defresource]])
+  (:import [java.net URL]
+           [org.apache.http HttpStatus]))
 
 (defn put-or-post? [ctx]
   (#{:put :post} (get-in ctx [:request :request-method])))
@@ -42,10 +44,17 @@
 
 (defn validate-context [ctx]
   (when (:failed ctx)
-    (ring-response {:status 400 :body (:failed ctx)})))
+    (ring-response {:status HttpStatus/SC_BAD_REQUEST :body (:failed ctx)})))
 
 (defn handle-exception [ctx]
   (let [exception (:exception ctx)]
     (when (= (type exception)
              javax.persistence.EntityNotFoundException)
-      (ring-response {:status 404 :body (.getMessage exception)}))))
+      (ring-response {:status HttpStatus/SC_NOT_FOUND 
+                      :body (.getMessage exception)}))))
+
+(def base-resource
+  {:known-content-type? #(check-content-type % ["text/plain"])
+   :handle-created #(validate-context %)
+   :handle-no-content #(validate-context %)
+   :handle-exception #(handle-exception %)})
