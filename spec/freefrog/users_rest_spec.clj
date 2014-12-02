@@ -32,6 +32,9 @@
 (defn illegal-arg-thrower [& args]
   (throw (IllegalArgumentException. "Illegal arguments")))
 
+(defn user-not-found-thrower [& args]
+  (throw (EntityNotFoundException. "User does not exist.")))
+
 (describe "users rest api"
   (before-all (helpers/start-test-server))
   (after-all (helpers/stop-test-server))
@@ -76,49 +79,20 @@
       (helpers/it-responds-with-status HttpStatus/SC_CREATED @response)
       (it "returns the location of the newly created resource"
         (should= (str helpers/host-url "/users/1234") 
-                 (helpers/get-location @response))))))
-;
-;  (context "with a circle"
-;    (around [it]
-;      (with-redefs [p/get-all-governance-logs (fn [id] sample-gov-log)
-;                    p/new-governance-log (fn [& args] 5678)]
-;        (it)))
-;
-;    (context "requesting the governance endpoint"
-;      (with response (helpers/http-request :get "/circles/1234/governance"))
-;
-;      (helpers/it-responds-with-status HttpStatus/SC_OK @response)
-;      (helpers/it-responds-with-body (json/generate-string sample-gov-log)
-;                                        @response))
-;
-;    (context "posting to the governance endpoint with application/json"
-;      (with response (helpers/http-request :post 
-;                                   "/circles/1234/governance" 
-;                                   {:content-type "application/json"}))
-;      (it "should not respond to application/json"
-;        (should= HttpStatus/SC_UNSUPPORTED_MEDIA_TYPE (:status @response))))
-;
-;    (context "posting to the governance endpoint"
-;      (with response (helpers/http-request :post "/circles/1234/governance"))
-;
-;      (helpers/it-responds-with-status HttpStatus/SC_CREATED @response)
-;      (it "should return the location of the newly created governance log"
-;        (should= (str helpers/host-url "/circles/1234/governance/5678") 
-;                 (helpers/get-location @response))))
-;
-;    (context "with a non-existent governance endpoint"
-;      (around [it]
-;        (with-redefs [p/get-governance-log govt-meeting-not-found-thrower]
-;          (it)))
-;
-;      (context "putting to the agenda endpoint"
-;        (with response (helpers/http-request :put 
-;                                     "/circles/1234/governance/5678/agenda"
-;                                     {:body "New agenda"}))
-;        (helpers/it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
-;        (helpers/it-responds-with-body "Governance meeting does not exist" 
-;                                          @response)))
-;
+                 (helpers/get-location @response)))))
+  (context "with a non-existant user"
+    (around [it]
+      (with-redefs [p/get-user user-not-found-thrower]
+        (it)))
+    (context "getting the user"
+      (with response (helpers/http-request :get "/users/1234"))
+      (helpers/it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
+      (helpers/it-responds-with-body "User does not exist." @response))))
+
+  ;(context "with an existing user"
+    ;(with-
+    ;(context "getting the user"
+      ;(it-should)
 ;    (context "with an existing governance endpoint"
 ;      (context "with an empty open agenda"
 ;        (around [it]

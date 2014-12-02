@@ -32,6 +32,7 @@
   (ANY "/circles/:circle-id/governance/:log-id/agenda" [circle-id log-id]
        (gr/governance-agenda-resource circle-id log-id))
   (ANY "/users" [] (ur/general-users-resource))
+  (ANY "/users/:user-id" [user-id] (ur/specific-users-resource user-id))
   ;;TODO
   ;(ANY "/circles/:circle-id/governance/:log-id/current" [circle-id log-id]
        ;(governance-current-resource circle-id log-id))

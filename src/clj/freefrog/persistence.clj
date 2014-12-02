@@ -43,3 +43,8 @@
   "Creates a new user using the given input user data. Returns the unique ID of
   this newly created governance log."
   [user-data])
+
+(defn get-user 
+  "Returns the specified user. Throws EntityNotFoundException if the user does
+  not exist."
+  [user-id])

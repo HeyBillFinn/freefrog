@@ -29,8 +29,12 @@
 (defn new-user [ctx]
   {::new-user-id (p/new-user (u/create-user (:parsed-json-body ctx)))})
 
+(defn get-user [user-id]
+  [true {::user (p/get-user user-id)}])
+
 (defresource specific-users-resource [user-id]
   util/base-resource
+  :exists? (fn [_] (get-user user-id))
   )
   ;:allowed-methods [:put :get]
 ;  :exists? (fn [_] (get-governance-log circle-id log-id))
