@@ -20,10 +20,8 @@
 (ns freefrog.governance-rest-spec
   (:require [speclj.core :refer :all]
             [clj-json.core :as json]
-            [clj-http.client :as http-client]
             [freefrog.rest-spec-helpers :as helpers]
             [freefrog.persistence :as p])
-  (:use [ring.adapter.jetty])
   (:import [javax.persistence EntityNotFoundException]
            [org.apache.http HttpStatus]))
 

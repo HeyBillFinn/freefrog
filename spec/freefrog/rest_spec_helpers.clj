@@ -19,13 +19,9 @@
 
 (ns freefrog.rest-spec-helpers
   (:require [speclj.core :refer :all]
-            [clj-json.core :as json]
             [clj-http.client :as http-client]
-            [freefrog.rest :as r]
-            [freefrog.persistence :as p])
-  (:use [ring.adapter.jetty])
-  (:import [javax.persistence EntityNotFoundException]
-           [org.apache.http HttpStatus]))
+            [freefrog.rest :as r])
+  (:use [ring.adapter.jetty]))
 
 (def test-server (ref nil))
 
