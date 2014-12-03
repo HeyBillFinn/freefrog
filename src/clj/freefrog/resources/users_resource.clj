@@ -32,27 +32,22 @@
 (defn get-user [user-id]
   [true {::user (p/get-user user-id)}])
 
+(defn put-user [user-id user-data]
+  (p/put-user user-id user-data))
+
 (defresource specific-users-resource [user-id]
   util/base-resource
+  :allowed-methods [:put :get]
+  :known-content-type? #(util/check-content-type % ["application/json"])
   :exists? (fn [_] (get-user user-id))
-  )
-  ;:allowed-methods [:put :get]
-;  :exists? (fn [_] (get-governance-log circle-id log-id))
-;  :new? #(nil? (::governance-log %))
-;  :put! #(put-governance-log circle-id log-id %)
-;  :handle-ok #(if (:is-open? (::governance-log %))
-;                (ring-response {:status HttpStatus/SC_OK 
-;                                :headers {"Open-Meeting" "true"}})
-;                (json/generate-string (::governance-log %))))
+  :new? #(nil? (::user %))
+  :put! #(put-user user-id (::user %))
+  :handle-ok #(json/generate-string (::user %))
+  :available-media-types ["application/json"])
 
 (defresource general-users-resource []
   util/base-resource
   :known-content-type? #(util/check-content-type % ["application/json"])
   :allowed-methods [:post]
   :post! #(new-user %)
-  :location #(util/build-entry-url (:request %) (::new-user-id %))
-  )
-  ;:post! (fn [_] (new-governance-log circle-id))
-  ;:exists? (fn [_] (get-governance-logs circle-id))
-  ;:handle-ok #(json/generate-string (::governance-logs %))
-  ;:location #(util/build-entry-url (:request %) (::new-governance-log-id %)))
+  :location #(util/build-entry-url (:request %) (::new-user-id %)))

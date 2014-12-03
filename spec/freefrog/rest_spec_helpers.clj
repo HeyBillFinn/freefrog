@@ -59,10 +59,14 @@
     (should= ~expected-status (:status ~response))))
 
 (defmacro it-responds-with-body [expected-body response]
-  `(it "should contain the appropriate body"
+  `(it "should return the correct body"
     (should= ~expected-body (:body ~response))))
 
 (defmacro it-responds-with-body-containing [expected-body response]
-  `(it "should contain the appropriate body"
+  `(it "should return the correct body"
     (should-contain ~expected-body (:body ~response))))
 
+(defmacro it-responds-with-content-type [expected-content-type response]
+  `(it "should return the correct content type"
+    (should-contain ~expected-content-type (get-in ~response 
+                                                   [:headers "Content-Type"]))))

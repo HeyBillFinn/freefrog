@@ -48,3 +48,8 @@
   "Returns the specified user. Throws EntityNotFoundException if the user does
   not exist."
   [user-id])
+
+(defn put-user 
+  "Store the user with the given user ID. Throws EntityNotFoundException if the
+  user does not exist."
+  [user-id user-data])

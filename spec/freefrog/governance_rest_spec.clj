@@ -133,9 +133,7 @@
           (with response (helpers/http-request :get "/circles/1234/governance/5678/agenda"))
           (helpers/it-responds-with-status HttpStatus/SC_OK @response)
           (helpers/it-responds-with-body "" @response)
-          (it "should return an empty agenda"
-            (should-contain "text/plain" (get-in @response
-                                                 [:headers "Content-Type"])))))
+          (helpers/it-responds-with-content-type "text/plain" @response)))
 
       (context "with an existing open agenda"
         (around [it]
@@ -165,9 +163,7 @@
           (with response (helpers/http-request :get "/circles/1234/governance/5678/agenda"))
           (helpers/it-responds-with-status HttpStatus/SC_OK @response)
           (helpers/it-responds-with-body "Current agenda" @response)
-          (it "should return the contents of the existing, open agenda"
-            (should-contain "text/plain" (get-in @response
-                                                 [:headers "Content-Type"])))))
+          (helpers/it-responds-with-content-type "text/plain" @response)))
 
       (context "with an existing closed agenda"
         (around [it]
