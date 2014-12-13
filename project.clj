@@ -27,7 +27,9 @@
 
   :source-paths ["src/clj"]
 
-  :dependencies [[org.clojure/clojure "1.6.0"]
+<<<<<<< HEAD
+  :dependencies [[com.velisco/tagged "0.3.4"]
+                 [org.clojure/clojure "1.6.0"]
                  [liberator "0.12.2"]
                  [compojure "1.2.1"]
                  [ring/ring-core "1.3.1"]
@@ -45,9 +47,10 @@
 
   :plugins [[speclj "3.1.0"]
             [lein-ring "0.8.13"]
-            [lein-marginalia "0.8.0"]
             [lein-ancient "0.5.5"]
-            [lein-kibit "0.0.8"]]
+            [lein-marginalia "0.8.0"]
+            [lein-kibit "0.0.8"]
+            [speclj "3.1.0"]]
 
   :test-paths ["spec"]
 
