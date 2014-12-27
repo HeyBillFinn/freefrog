@@ -18,12 +18,11 @@
 ;
 
 (ns freefrog.resources.resource_util
-  (:require [liberator.representation :refer [ring-response]]
+  (:require [clj-json.core :as json]
             [clojure.java.io :as io]
-            [clj-json.core :as json]
-            [liberator.core :refer [resource defresource]])
-  (:import [java.net URL]
-           [org.apache.http HttpStatus]))
+            [liberator.representation :refer [ring-response]])
+  (:import (java.net URL)
+           (org.apache.http HttpStatus)))
 
 (defn put-or-post? [ctx]
   (#{:put :post} (get-in ctx [:request :request-method])))

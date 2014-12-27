@@ -18,13 +18,13 @@
 ;
 
 (ns freefrog.resources.governance_resource
-  (:require [freefrog.resources.resource_util :as util]
-            [liberator.representation :refer [ring-response]]
-            [liberator.core :refer [resource defresource]]
-            [clj-json.core :as json]
+  (:require [clj-json.core :as json]
             [freefrog.governance-logs :as gl]
-            [freefrog.persistence :as p])
-  (:import [org.apache.http HttpStatus]))
+            [freefrog.persistence :as p]
+            [freefrog.resources.resource_util :as util]
+            [liberator.core :refer [defresource]]
+            [liberator.representation :refer [ring-response]])
+  (:import (org.apache.http HttpStatus)))
 
 (defn new-governance-log [circle-id]
   {::new-governance-log-id (p/new-governance-log 

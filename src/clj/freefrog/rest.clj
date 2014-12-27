@@ -18,11 +18,10 @@
 ;
 
 (ns freefrog.rest
-  (:require [liberator.dev]
-            [freefrog.resources.governance_resource :as gr]
-            [freefrog.resources.users_resource :as ur]
+  (:require [compojure.core :refer [ANY defroutes]]
             [compojure.route :as route]
-            [compojure.core :refer [defroutes ANY GET]]))
+            [freefrog.resources.governance_resource :as gr]
+            [freefrog.resources.users_resource :as ur]))
 
 (defroutes app
   (ANY "/circles/:circle-id/governance" [circle-id] 

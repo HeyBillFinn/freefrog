@@ -18,13 +18,11 @@
 ;
 
 (ns freefrog.resources.users_resource
-  (:require [freefrog.resources.resource_util :as util]
-            [liberator.representation :refer [ring-response]]
-            [liberator.core :refer [resource defresource]]
-            [clj-json.core :as json]
+  (:require [clj-json.core :as json]
+            [freefrog.persistence :as p]
+            [freefrog.resources.resource_util :as util]
             [freefrog.users :as u]
-            [freefrog.persistence :as p])
-  (:import [org.apache.http HttpStatus]))
+            [liberator.core :refer [defresource]]))
 
 (defn new-user [ctx]
   {::new-user-id (p/new-user (u/create-user (:parsed-json-body ctx)))})
