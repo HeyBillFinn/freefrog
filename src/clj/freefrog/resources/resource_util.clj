@@ -79,7 +79,7 @@
 
 (def base-resource
   {:known-content-type? #(check-content-type % ["text/plain"])
-   :handle-created #(validate-context %)
-   :malformed? #(malformed-json? %)
-   :handle-no-content #(validate-context %)
-   :handle-exception #(handle-exception %)})
+   :handle-created validate-context
+   :malformed? malformed-json?
+   :handle-no-content validate-context
+   :handle-exception handle-exception})

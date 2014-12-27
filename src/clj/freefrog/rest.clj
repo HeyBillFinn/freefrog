@@ -39,6 +39,5 @@
   (route/not-found "<h1>:-(</hi>"))
 
 (def handler 
-  (-> app 
-    (liberator.dev/wrap-trace :header :ui)))
+  (liberator.dev/wrap-trace app :header :ui))
 
