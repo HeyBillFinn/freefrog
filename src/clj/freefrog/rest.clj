@@ -21,7 +21,8 @@
   (:require [compojure.core :refer [ANY defroutes]]
             [compojure.route :as route]
             [freefrog.resources.governance_resource :as gr]
-            [freefrog.resources.users_resource :as ur]))
+            [freefrog.resources.users_resource :as ur]
+            [liberator.dev :as ld]))
 
 (defroutes app
   (ANY "/circles/:circle-id/governance" [circle-id] 
@@ -38,5 +39,5 @@
   (route/not-found "<h1>:-(</hi>"))
 
 (def handler 
-  (liberator.dev/wrap-trace app :header :ui))
+  (ld/wrap-trace app :header :ui))
 
