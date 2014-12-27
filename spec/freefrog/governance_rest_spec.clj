@@ -23,14 +23,15 @@
             [freefrog.rest-spec-helpers :as helpers]
             [freefrog.persistence :as p])
   (:import [javax.persistence EntityNotFoundException]
-           [org.apache.http HttpStatus]))
+           [org.apache.http HttpStatus])
+  (:use [ring.adapter.jetty]))
 
 (def sample-gov-log {:body "Add role\nRename accountability."})
 
-(defn circle-not-found-thrower [& args]
+(defn throw-circle-not-found [& args]
   (throw (EntityNotFoundException. "Circle does not exist")))
 
-(defn govt-meeting-not-found-thrower [& args]
+(defn throw-meeting-not-found [& args]
   (throw (EntityNotFoundException. "Governance meeting does not exist")))
 
 (describe "governance rest api"
@@ -39,10 +40,10 @@
 
   (context "with a non-existent circle"
     (around [it]
-      (with-redefs [p/get-all-governance-logs circle-not-found-thrower
-                    p/new-governance-log circle-not-found-thrower
-                    p/get-governance-log circle-not-found-thrower
-                    p/put-governance-log circle-not-found-thrower]
+      (with-redefs [p/get-all-governance-logs throw-circle-not-found
+                    p/new-governance-log throw-circle-not-found
+                    p/get-governance-log throw-circle-not-found
+                    p/put-governance-log throw-circle-not-found]
         (it)))
 
     (context "requesting the governance endpoint"
@@ -94,7 +95,7 @@
 
     (context "with a non-existent governance endpoint"
       (around [it]
-        (with-redefs [p/get-governance-log govt-meeting-not-found-thrower]
+        (with-redefs [p/get-governance-log throw-meeting-not-found]
           (it)))
 
       (context "putting to the agenda endpoint"
