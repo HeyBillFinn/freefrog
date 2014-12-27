@@ -196,3 +196,4 @@
           (helpers/it-responds-with-body "Agenda is closed." @response))))))
 
 (run-specs)
+

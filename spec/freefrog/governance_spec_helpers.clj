@@ -39,3 +39,4 @@
         (apply fn (concat [sample-anchor-with-role nil] params)))
       (should-throw IllegalArgumentException "Name may not be empty"
         (apply fn (concat [sample-anchor-with-role ""] params))))))
+

@@ -70,3 +70,4 @@
   `(it "should return the correct content type"
     (should-contain ~expected-content-type (get-in ~response 
                                                    [:headers "Content-Type"]))))
+

@@ -21,6 +21,7 @@
 ;;; Defines how all roles can be manipulated, both through governance
 ;;; (maintenance and elections) and through the normal business of
 ;;; appointment/removal.
+
 (ns freefrog.governance-roles-spec
   (:require [clojure.set :as s]
             [freefrog.governance :as g]
@@ -273,4 +274,6 @@
       (format "Policy '%s' doesn't exist on role '%s'" sample-policy-name
               role-name)
       (g/remove-role-policy sample-anchor-with-domain role-name sample-policy-name))))
+
 (run-specs)
+

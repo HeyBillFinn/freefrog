@@ -19,6 +19,7 @@
 
 ;;; # Circle Manipulation Spec #
 ;;; Defines how circles may be updated.
+
 (ns freefrog.governance-circles-spec
   (:require [freefrog.governance :as g]
             [freefrog.governance-spec-helpers :refer :all]
@@ -405,3 +406,4 @@
       (should= expected actual))))
 
 (run-specs)
+
