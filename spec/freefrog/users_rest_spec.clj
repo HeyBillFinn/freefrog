@@ -29,10 +29,10 @@
 (def sample-user {:username "bfinn"
                   :password "abcd1234"})
 
-(defn illegal-arg-thrower [& args]
+(defn throw-illegal-arg [& args]
   (throw (IllegalArgumentException. "Illegal arguments")))
 
-(defn user-not-found-thrower [& args]
+(defn throw-user-not-found [& args]
   (throw (EntityNotFoundException. "User does not exist.")))
 
 (describe "users rest api"
@@ -60,7 +60,7 @@
 
     (context "with missing parameters"
       (around [it]
-        (with-redefs [u/create-user illegal-arg-thrower]
+        (with-redefs [u/create-user throw-illegal-arg]
           (it)))
 
       (with response (helpers/http-request :post "/users"
@@ -82,7 +82,7 @@
                  (helpers/get-location @response)))))
   (context "with a non-existent user"
     (around [it]
-      (with-redefs [p/get-user user-not-found-thrower]
+      (with-redefs [p/get-user throw-user-not-found]
         (it)))
 
     (context "getting the user"
