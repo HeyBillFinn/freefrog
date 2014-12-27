@@ -41,6 +41,7 @@
 
   (context "getting the users endpoint"
     (with response (helpers/http-request :get "/users"))
+
     (helpers/it-responds-with-status HttpStatus/SC_METHOD_NOT_ALLOWED @response))
 
   (context "posting to the users endpoint"
@@ -48,6 +49,7 @@
       (with response (helpers/http-request :post "/users"
                                            {:content-type "text/plain"
                                             :body "New User!"}))
+
       (helpers/it-responds-with-status HttpStatus/SC_UNSUPPORTED_MEDIA_TYPE 
                                        @response))
 
@@ -55,6 +57,7 @@
       (with response (helpers/http-request :post "/users"
                                            {:content-type "application/json"
                                             :body "{\"username:\"}"}))
+
       (helpers/it-responds-with-status HttpStatus/SC_BAD_REQUEST @response)
       (helpers/it-responds-with-body-containing "Unexpected character" @response))
 
@@ -62,10 +65,10 @@
       (around [it]
         (with-redefs [u/create-user throw-illegal-arg]
           (it)))
-
       (with response (helpers/http-request :post "/users"
                                            {:content-type "application/json"
                                             :body (json/generate-string sample-user)}))
+
       (helpers/it-responds-with-status HttpStatus/SC_BAD_REQUEST @response)
       (helpers/it-responds-with-body-containing "Illegal arguments" @response))
 
@@ -76,17 +79,19 @@
       (with response (helpers/http-request :post "/users"
                                            {:content-type "application/json"
                                             :body (json/generate-string sample-user)}))
+
       (helpers/it-responds-with-status HttpStatus/SC_CREATED @response)
       (it "returns the location of the newly created resource"
         (should= (str helpers/host-url "/users/1234") 
                  (helpers/get-location @response)))))
+
   (context "with a non-existent user"
     (around [it]
       (with-redefs [p/get-user throw-user-not-found]
         (it)))
-
     (context "getting the user"
       (with response (helpers/http-request :get "/users/1234"))
+
       (helpers/it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
       (helpers/it-responds-with-body "User does not exist." @response))
 
@@ -95,6 +100,7 @@
                                            {:content-type "application/json"
                                             :body (json/generate-string 
                                                     sample-user)}))
+
       (helpers/it-responds-with-status HttpStatus/SC_NOT_FOUND @response)
       (helpers/it-responds-with-body "User does not exist." @response)))
 
@@ -102,9 +108,9 @@
     (around [it]
       (with-redefs [p/get-user (fn [& args] {:username "bfinn"})]
         (it)))
-
     (context "getting the user"
       (with response (helpers/http-request :get "/users/1234"))
+
       (helpers/it-responds-with-status HttpStatus/SC_OK @response)
       (helpers/it-responds-with-content-type "application/json" @response)
       (helpers/it-responds-with-body-containing "\"username\":\"bfinn\"" @response))
@@ -114,12 +120,14 @@
         (with response (helpers/http-request :put "/users/1234"
                                              {:content-type "text/plain"
                                               :body "New User!"}))
+
         (helpers/it-responds-with-status HttpStatus/SC_UNSUPPORTED_MEDIA_TYPE 
                                          @response))
       (context "with badly formed JSON"
         (with response (helpers/http-request :put "/users/1234"
                                              {:content-type "application/json"
                                               :body "{\"username:\"}"}))
+
         (helpers/it-responds-with-status HttpStatus/SC_BAD_REQUEST @response)
         (helpers/it-responds-with-body-containing "Unexpected character" @response))
 
@@ -128,6 +136,7 @@
                                            {:content-type "application/json"
                                             :body (json/generate-string 
                                                     sample-user)}))
+
         ; waiting on https://github.com/slagyr/speclj/pull/114
         (xit "should call p/put-user")
         (helpers/it-responds-with-status HttpStatus/SC_NO_CONTENT @response)))))
