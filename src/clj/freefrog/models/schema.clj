@@ -20,12 +20,12 @@
 (ns freefrog.models.schema
   (:use [lobos.core :only (defcommand migrate)])
   (:require [lobos.connectivity :refer [open-global]]
-            [db.config :refer [db-config]]
+            [env.config :refer [env-config]]
             [lobos.migration :as lm]))
 
 (defcommand pending-migrations []
   (binding [lobos.migration/*src-directory* "src/clj/"]
-    (lm/pending-migrations (:db db-config) sname)))
+    (lm/pending-migrations (:db env-config) sname)))
 
 (defn actualized?
   "checks if there aren't pending migrations"

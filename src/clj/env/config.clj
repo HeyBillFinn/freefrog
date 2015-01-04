@@ -17,12 +17,12 @@
 ; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
-(ns db.config
+(ns env.config
   (:require [clojure.java.io :refer :all]))
 
 (def config (delay (load-file (.getFile (resource "config.clj")))))
 (defn get-config []
     @(force config))
 
-(def db-config (get-config))
+(def env-config (get-config))
 

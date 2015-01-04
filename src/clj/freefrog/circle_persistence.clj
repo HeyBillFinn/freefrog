@@ -18,7 +18,7 @@
 ;
 
 (ns freefrog.circle-persistence
-  (:require [db.config :refer [db-config]]
+  (:require [env.config :refer [env-config]]
             [clojure.java.io :refer :all]
             [korma.core :refer :all]))
 
@@ -30,7 +30,7 @@
       ;; H2 doesn't play nicely with JDBC's result set. Instead of returning
       ;; the generated ID in a map of the form {:<column-name> <generated-id>}, 
       ;; it returns {:scope_identity() <generated-id>}
-  (database (:korma-db db-config)))
+  (database (:korma-db env-config)))
 
 (defn new-circle
   "Creates a new circle. Returns the unique ID of this newly created circle."

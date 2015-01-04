@@ -19,7 +19,7 @@
 
 (ns lobos.config
   (:require [lobos.connectivity :refer [open-global]]
-            [db.config :refer [db-config]]))
+            [env.config :refer [env-config]]))
 
-(open-global (:db db-config))
+(open-global (:db env-config))
 
