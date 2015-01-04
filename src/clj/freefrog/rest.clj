@@ -26,6 +26,7 @@
             [freefrog.persistence :as p]
             [clj-json.core :as json]
             [compojure.route :as route]
+            [freefrog.models.schema :as schema]
             [compojure.core :refer [defroutes ANY GET]])
   (:import java.net.URL
            [javax.persistence EntityNotFoundException]))
@@ -134,6 +135,11 @@
   ;(ANY "/circles/:circle-id/governance/:log-id/current" [circle-id log-id]
        ;(governance-current-resource circle-id log-id))
   (route/not-found "<h1>:-(</hi>"))
+
+(defn init
+  "Initializes the application."
+  []
+  (schema/actualize))
 
 (def handler 
   (-> app 

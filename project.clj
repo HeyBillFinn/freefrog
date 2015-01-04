@@ -32,20 +32,39 @@
                  [com.velisco/tagged "0.3.4"]
                  [compojure "1.2.1"]
                  [javax.persistence/persistence-api "1.0"]
+                 [korma "0.4.0"]
                  [liberator "0.12.2"]
+                 [lobos "1.0.0-beta3"]
+                 [log4j "1.2.17" 
+                  :exclusions [javax.mail/mail 
+                               javax.jms/jms
+                               com.sun.jdmk/jmxtools
+                               com.sun.jmx/jmxri]]
                  [org.clojure/clojure "1.6.0"]
-                 [ring/ring-core "1.3.1"]
-                 [speclj "3.1.0"]]
+                 [ring/ring-core "1.3.1"]]
 
-  :profiles {:dev {:dependencies [[clj-http "1.0.1"]
-                                  [ring-server "0.3.1"]]}}
+  :profiles {:test {:resource-paths ["resource-test"] 
+                   :dependencies [[speclj "3.1.0"]
+                                  [clj-http "1.0.1"]
+                                  [ring-server "0.3.1"]
+                                  [org.postgresql/postgresql "9.3-1102-jdbc4"]]}
+             :dev {:resource-paths ["resource-dev"]
+                   :dependencies [[speclj "3.1.0"]
+                                  [clj-http "1.0.1"]
+                                  [ring-server "0.3.1"]
+                                  [com.h2database/h2 "1.4.184"]]}
+             :prod {:resource-paths ["resource-prod"]
+                    :dependencies [[org.postgresql/postgresql "9.3-1102-jdbc4"]]}}
 
-  :ring {:handler freefrog.rest/handler :reload-paths ["src"]}
+  :ring {:handler freefrog.rest/handler 
+         :init freefrog.rest/init
+         :reload-paths ["src"]}
 
   :plugins [[lein-ancient "0.5.5"]
             [lein-kibit "0.0.8"]
             [lein-marginalia "0.8.0"]
-            [lein-ring "0.8.13"]
+            [lein-ring "0.8.13" :exclusions [org.clojure/data.xml
+                                             org.clojure/clojure]]
             [speclj "3.1.0"]]
 
   :test-paths ["spec"]
