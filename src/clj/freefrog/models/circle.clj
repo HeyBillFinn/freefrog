@@ -17,7 +17,7 @@
 ; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
-(ns freefrog.circle-persistence
+(ns freefrog.models.circle
   (:require [env.config :refer [env-config]]
             [clojure.java.io :refer :all]
             [korma.core :refer :all]))
@@ -48,5 +48,4 @@
   "Store the governance log for the specified circle and ID. Throws
   EntityNotFoundException if the specified log or circle does not exist."
   [circle-id circle])
-
 

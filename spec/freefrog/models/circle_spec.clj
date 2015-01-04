@@ -17,9 +17,9 @@
 ; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
-(ns freefrog.circle-persistence-spec
+(ns freefrog.models.circle-spec
   (:require [speclj.core :refer :all]
-            [freefrog.circle-persistence :as p]
+            [freefrog.models.circle :as c]
             [freefrog.governance :as gov]
             [freefrog.models.schema :as schema])
   (:import [javax.persistence EntityNotFoundException]))
@@ -29,15 +29,15 @@
 (describe "Circle persistence"
   (tags :circle-persistence)
   (it "stores a circle"
-    (should-not-throw (p/new-circle {:name "Test Circle"})))
+    (should-not-throw (c/new-circle {:name "Test Circle"})))
 
   (context "with a created circle"
-    (with circle-id (p/new-circle {:name "Test Circle"}))
+    (with circle-id (c/new-circle {:name "Test Circle"}))
     (it "returns a valid ID"
       (should-contain #"\d+" (str @circle-id)))
     
     (context "having retrieved the created circle"
-      (with circle (p/get-circle @circle-id))
+      (with circle (c/get-circle @circle-id))
       (it "retreives the persisted circle"
         (should= "Test Circle" (:name @circle))
         (should= @circle-id (:id @circle))))))
