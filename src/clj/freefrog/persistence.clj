@@ -17,7 +17,13 @@
 ; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
-(ns freefrog.persistence)
+(ns freefrog.persistence
+  (:import (freefrog DuplicateEntityException)))
+
+(def anchor-circles (atom {}))
+
+(defn reset-database []
+  (reset! anchor-circles {}))
 
 (defn new-governance-log 
   "Creates a new governance log for the circle using the given input log.
@@ -39,3 +45,20 @@
   EntityNotFoundException if the circle does not exist."
   [_]
   [])
+
+(defn new-anchor-circle
+  "Creates a new anchor circle. Returns the unique ID of this newly created 
+  anchor circle."
+  [id circle principal]
+  (when (get @anchor-circles id)
+    (throw (DuplicateEntityException. 
+             (format "Anchor circle with ID %s already exists" id))))
+  (swap! anchor-circles assoc id {:circle circle :principal principal})
+  id)
+
+(defn get-anchor-circles-for-principal
+  "Retrieves the anchor circles, filtered by the supplied principal."
+  [principal]
+  (select-keys @anchor-circles (for [[k v] @anchor-circles 
+                                     :when (= (:principal v) principal)] k)))
+

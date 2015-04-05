@@ -60,6 +60,7 @@
 
 (defmacro it-responds-with-status [expected-status response]
   `(it "should return the right response code"
+     (prn ~response)
      (should= ~expected-status (:status ~response))))
 
 (defmacro it-responds-with-body [expected-body response]
@@ -70,6 +71,10 @@
   `(it "should contain the appropriate json body"
      (should= ~expected-body (walk/keywordize-keys
                                (json/parse-string (:body ~response))))))
+
+(defmacro it-contains-header [header-key header-value response]
+  `(it "should contain the expected header"
+     (should= ~header-value (get (:headers ~response) ~header-key))))
 
 (def principal1 "steve@example.com" )
 (def principal2 "bill@example.com")
@@ -86,6 +91,7 @@
   (with-all stop-server-fn (r/start-server))
   (before-all @stop-server-fn)
   (after-all (@stop-server-fn))
+  (before (p/reset-database))
 
   (context "governance"
     (with circle-response (http-request :get (circle-api "anchor/dev/qa")
@@ -167,6 +173,50 @@
       (context "bad login"
         (it-responds-with-status 403 @post-response3)))
 
-    (context "deleting a session")))
+    (context "deleting a session"))
+
+  (context "being logged in as a valid user"
+    (around [it]
+      (with-redefs [auth/authenticate (fn [token]
+                                        (principals-map token))] (it)))
+    (with-all cookie-store (cookies/cookie-store))
+
+    (with post-response1 (http-request :post session-api
+                                       (json-post-body @cookie-store
+                                                       {:assertion "good1"})))
+    (before @post-response1)
+    (it-responds-with-status 200 @post-response1)
+
+    (context "with a created anchor circles"
+      (with create-anchor-circle-response (http-request :post "/circles"
+                                          (json-post-body @cookie-store
+                                                          {:name "Courage Labs Anchor"
+                                                           :shortName "CL"})))
+      (with created-anchor-circle-url 
+        (str host-url (get-in @create-anchor-circle-response 
+                              [:headers "Location"])))
+      (before @create-anchor-circle-response)
+      (it-responds-with-status 201 @create-anchor-circle-response)
+      (it-contains-header "Location" "/api/circles/cl" @create-anchor-circle-response)
+
+      (context "creating an anchor circle with the same short name"
+        (with duplicate-create-anchor-circle-response (http-request :post "/circles"
+                                                                    (json-post-body @cookie-store
+                                                                                    {:name "Courage Labs Anchor Part 2"
+                                                                                     :shortName "CL"})))
+        (it-responds-with-status 400 @duplicate-create-anchor-circle-response))
+
+      (context "retrieving a principal's anchor circles"
+        (with get-anchor-circles-response (http-request :get "/circles"
+                                                        {:cookie-store @cookie-store}))
+        (it-responds-with-status 200 @get-anchor-circles-response)
+        (it-responds-with-json {:cl {:circle {:name "Courage Labs Anchor"
+                                              :purpose nil
+                                              :domains nil
+                                              :accountabilities nil
+                                              :policies nil
+                                              :roles nil }
+                                     :principal principal1}} 
+                               @get-anchor-circles-response)))))
 
 (run-specs)

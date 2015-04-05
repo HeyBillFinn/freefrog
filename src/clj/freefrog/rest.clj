@@ -19,6 +19,7 @@
 
 (ns freefrog.rest
   (:require [org.httpkit.server :as httpkit]
+            [clojure.string :as str]
             [ring.util.http-response :refer :all]
             [compojure.api.sweet :refer :all]
             [compojure.core :as c]
@@ -26,12 +27,16 @@
             [ring.middleware.session :as session]
             [schema.core :as s]
             [freefrog.persistence :as p]
+            [freefrog.governance :as g]
             [freefrog.auth :as auth]
             [clojure.tools.logging :as log])
-  (:import (freefrog MissingEntityException)))
+  (:import (freefrog MissingEntityException)
+           (freefrog DuplicateEntityException)))
 
 ;;todo Make this configurable
 (def port 3000)
+
+(s/defschema Circle {:name String, :shortName String})
 
 (defn wrap-dir-index [handler]
   (fn [req]
@@ -45,15 +50,44 @@
         (let [{:keys [_ message]} (meta e)]
           (not-found message))))))
 
+(defn wrap-duplicate-entity [handler]
+  (fn [req]
+    (try
+      (handler req)
+      (catch DuplicateEntityException e
+        (let [{:keys [_ message]} (meta e)]
+          (bad-request message))))))
+
+(defn logged-in [handler]
+  (fn [req]
+    (if (get-in req [:session :principal])
+      (handler req)
+      (unauthorized {:error "Not authorized"}))))
+
 (defapi api
   (swagger-ui "/api")
   (swagger-docs
     :title "Freefrog API")
   (swaggered "freefrog"
     :description "The Freefrog API"
-    (middlewares [wrap-missing-entity session/wrap-session]
+    (middlewares [wrap-missing-entity wrap-duplicate-entity session/wrap-session]
       (context "/api" []
         (context "/circles" []
+          (GET* "/" {{principal :principal} :session :as request}
+                :middlewares [logged-in]
+                :summary "Retrieves all anchor circles for the logged in user."
+                (ok (p/get-anchor-circles-for-principal principal)))
+
+          (POST* "/" {{principal :principal} :session :as request}
+                 :middlewares [logged-in]
+                 :summary "Create an anchor circle."
+                 :body [circle Circle]
+                 (header (created "ok") "Location" (format "/api/circles/%s"
+                                                      (p/new-anchor-circle
+                                                        (str/lower-case (:shortName circle))
+                                                        (g/create-circle (:name circle))
+                                                        principal))))
+          
           (GET* "/*/_governance" {{path :*} :route-params}
                 :return [s/Str]
                 :summary "Retrieve the governance for a circle"
@@ -81,11 +115,9 @@
                        session (if principal
                                  {:principal principal}
                                  {})
-
-                       response
-                       (if principal
-                         (ok principal)
-                         (forbidden "Please submit a valid assertion"))]
+                       response (if principal
+                                  (ok principal)
+                                  (forbidden "Please submit a valid assertion"))]
                    (log/info (format "Login attempt: %s" result))
                    (assoc response :session session)))
 
