@@ -60,7 +60,6 @@
 
 (defmacro it-responds-with-status [expected-status response]
   `(it "should return the right response code"
-     (prn ~response)
      (should= ~expected-status (:status ~response))))
 
 (defmacro it-responds-with-body [expected-body response]
