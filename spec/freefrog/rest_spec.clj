@@ -210,13 +210,10 @@
         (with get-anchor-circles-response (http-request :get "/circles"
                                                         {:cookie-store @cookie-store}))
         (it-responds-with-status 200 @get-anchor-circles-response)
-        (it-responds-with-json {:cl {:circle {:name "Courage Labs Anchor"
-                                              :purpose nil
-                                              :domains nil
-                                              :accountabilities nil
-                                              :policies nil
-                                              :roles nil }
-                                     :principal principal1}} 
+        (it-responds-with-json [{:circle_id "cl" 
+                                 :circle {:name "Courage Labs Anchor" :purpose nil
+                                              :domains nil :accountabilities nil
+                                              :policies nil :roles nil }}]
                                @get-anchor-circles-response)))))
 
 (run-specs)

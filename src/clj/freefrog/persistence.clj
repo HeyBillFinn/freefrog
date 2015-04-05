@@ -50,15 +50,16 @@
   "Creates a new anchor circle. Returns the unique ID of this newly created 
   anchor circle."
   [id circle principal]
-  (when (get @anchor-circles id)
+  (when (not-empty (filter #(= id (:circle_id %)) (get @anchor-circles principal)))
     (throw (DuplicateEntityException. 
-             (format "Anchor circle with ID %s already exists" id))))
-  (swap! anchor-circles assoc id {:circle circle :principal principal})
+             (format "Anchor circle with ID %s already exists with user %s"
+                     id principal))))
+  (swap! anchor-circles update-in [principal] conj {:circle_id id 
+                                                    :circle circle})
   id)
 
 (defn get-anchor-circles-for-principal
   "Retrieves the anchor circles, filtered by the supplied principal."
   [principal]
-  (select-keys @anchor-circles (for [[k v] @anchor-circles 
-                                     :when (= (:principal v) principal)] k)))
+  (get @anchor-circles principal))
 
