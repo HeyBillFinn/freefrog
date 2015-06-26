@@ -101,8 +101,9 @@
   (validate-not (role-missing? circle role-name)
                 (str "Role not found: " role-name)))
 
-(defn- validate-name [type role-name]
-  (validate-not (empty? role-name) (format "%s name may not be empty" type)))
+(defn- validate-name [thing-type thing-name]
+  (validate-not (empty? thing-name)
+                (format "%s name may not be empty" thing-type)))
 
 (defn- validate-role-updates [circle role-name]
   "Checks that the role name is not empty and that it exists in the circle."
