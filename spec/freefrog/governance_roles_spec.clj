@@ -143,9 +143,9 @@
                                              sample-accountabilities))))
 
     (it "doesn't let you use empty names"
-      (should-throw IllegalArgumentException "Name may not be empty"
+      (should-throw IllegalArgumentException "Role name may not be empty"
         (g/add-role-to-circle sample-anchor nil nil nil nil))
-      (should-throw IllegalArgumentException "Name may not be empty"
+      (should-throw IllegalArgumentException "Role name may not be empty"
         (g/add-role-to-circle sample-anchor "" nil nil nil)))
 
     (it "doesn't let you overwrite an existing role"

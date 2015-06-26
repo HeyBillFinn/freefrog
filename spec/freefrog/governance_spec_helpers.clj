@@ -50,7 +50,7 @@
         (apply fn (concat [sample-anchor role-name] params))))
 
     (it "doesn't work with an empty name"
-      (should-throw IllegalArgumentException "Name may not be empty"
+      (should-throw IllegalArgumentException "Role name may not be empty"
         (apply fn (concat [sample-anchor-with-role nil] params)))
-      (should-throw IllegalArgumentException "Name may not be empty"
+      (should-throw IllegalArgumentException "Role name may not be empty"
         (apply fn (concat [sample-anchor-with-role ""] params))))))

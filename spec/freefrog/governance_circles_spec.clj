@@ -35,9 +35,9 @@
       (g/create-circle "Courage Labs")))
 
   (it "doesn't work with an empty name"
-    (should-throw IllegalArgumentException "Name may not be empty"
+    (should-throw IllegalArgumentException "Circle name may not be empty"
       (g/create-circle nil))
-    (should-throw IllegalArgumentException "Name may not be empty"
+    (should-throw IllegalArgumentException "Circle name may not be empty"
       (g/create-circle "")))
 
   (it "can tell you if a role is authorized to act as a circle"
@@ -310,12 +310,12 @@
 
     (it "won't appoint someone to a role with an empty name"
       (should-throw IllegalArgumentException
-        "Name may not be empty"
+        "Role name may not be empty"
         (g/appoint-to-role sample-anchor-with-role nil "june")))
 
     (it "won't appoint nil to a role"
       (should-throw IllegalArgumentException
-        "Name may not be empty"
+        "Person name may not be empty"
         (g/appoint-to-role sample-anchor-with-role role-name nil)))))
 
 
