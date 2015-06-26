@@ -119,7 +119,7 @@
   (remove-role [container role-name])
   (rename-role [container role-name new-name]))
 
-(defrecord Role [rname purpose domains accountabilities policies]
+(defrecord Role [rname purpose domains accountabilities policies assignees]
   GovernanceRecord
   (is-circle? [_] false))
 
@@ -304,7 +304,7 @@
                            (when (seq domains) (into (hash-set) domains))
                            (when (seq accountabilities)
                              (into (hash-set) accountabilities))
-                           nil))))
+                           nil nil))))
 
 (defn update-purpose [entity new-purpose]
   (if (empty? new-purpose)
@@ -379,6 +379,9 @@
    (appoint-to-role circle role-name person-name nil))
   ([circle role-name person-name focus]
    (update-in circle [:roles role-name :assignees] assoc person-name focus)))
+
+(defn unappoint-from-role [circle role-name person-name]
+  (remove-and-purge-from-role circle role-name :assignees dissoc person-name))
 
 ;; ## Role Collection Manipulation Functions ##
 ;; These functions are critical to maintaining namespace encapsulation. Simply

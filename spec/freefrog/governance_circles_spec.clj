@@ -260,17 +260,20 @@
 
 ;; Section 2.4
 (describe "Role Assignment"
-  (let [sample-anchor-with-assignee
-        (g/appoint-to-role sample-anchor-with-two-roles tester-role "larry")
+  (let [assignee-name "larry"
+        focus-assignee-name "george"
+        sample-anchor-with-assignee
+        (g/appoint-to-role sample-anchor-with-two-roles tester-role
+                           assignee-name)
 
         sample-anchor-with-assignee-with-focus
-        (g/appoint-to-role sample-anchor-with-role role-name "george"
+        (g/appoint-to-role sample-anchor-with-role role-name focus-assignee-name
                            "cool stuff")]
     (it "can appoint someone to a role"
       (should= (update-in sample-anchor-with-role
                           [:roles role-name] assoc :assignees
-                          {"george" nil})
-        (g/appoint-to-role sample-anchor-with-role role-name "george"))
+                          {"susan" nil})
+        (g/appoint-to-role sample-anchor-with-role role-name "susan"))
 
       (should= (update-in sample-anchor-with-two-roles
                           [:roles tester-role] assoc :assignees
@@ -285,14 +288,19 @@
     (it "can appoint someone to a role with a focus"
       (should= (update-in sample-anchor-with-role
                           [:roles role-name] assoc :assignees
-                          {"george" "cool stuff"})
+                          {focus-assignee-name "cool stuff"})
         sample-anchor-with-assignee-with-focus)
 
       (should= (update-in sample-anchor-with-role
                           [:roles role-name] assoc :assignees
-                          {"george" "boring stuff"})
+                          {focus-assignee-name "boring stuff"})
         (g/appoint-to-role sample-anchor-with-assignee-with-focus
-                           role-name "george" "boring stuff")))))
+                           role-name focus-assignee-name "boring stuff")))
+
+    (it "can remove someone from a role"
+      (should= sample-anchor-with-two-roles
+        (g/unappoint-from-role sample-anchor-with-assignee tester-role
+                               assignee-name)))))
 
 ;; Section 2.5
 (describe "Elected Roles"
