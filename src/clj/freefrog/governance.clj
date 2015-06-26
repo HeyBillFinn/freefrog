@@ -378,10 +378,7 @@
   ([circle role-name person-name]
    (appoint-to-role circle role-name person-name nil))
   ([circle role-name person-name focus]
-   (update-in circle [:roles role-name :assignees] conj
-              (merge {:aname person-name} (when focus {:focus focus})))))
-
-
+   (update-in circle [:roles role-name :assignees] assoc person-name focus)))
 
 ;; ## Role Collection Manipulation Functions ##
 ;; These functions are critical to maintaining namespace encapsulation. Simply

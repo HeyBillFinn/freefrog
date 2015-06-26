@@ -261,28 +261,38 @@
 ;; Section 2.4
 (describe "Role Assignment"
   (let [sample-anchor-with-assignee
-        (g/appoint-to-role sample-anchor-with-two-roles tester-role "larry")]
+        (g/appoint-to-role sample-anchor-with-two-roles tester-role "larry")
+
+        sample-anchor-with-assignee-with-focus
+        (g/appoint-to-role sample-anchor-with-role role-name "george"
+                           "cool stuff")]
     (it "can appoint someone to a role"
       (should= (update-in sample-anchor-with-role
                           [:roles role-name] assoc :assignees
-                          [{:aname "george"}])
+                          {"george" nil})
         (g/appoint-to-role sample-anchor-with-role role-name "george"))
 
       (should= (update-in sample-anchor-with-two-roles
                           [:roles tester-role] assoc :assignees
-                          [{:aname "larry"}])
+                          {"larry" nil})
         sample-anchor-with-assignee)
 
       (should= (update-in sample-anchor-with-assignee
-                          [:roles tester-role :assignees] conj
-                          {:aname "jane"})
+                          [:roles tester-role :assignees] assoc
+                          "jane" nil)
         (g/appoint-to-role sample-anchor-with-assignee tester-role "jane")))
+
     (it "can appoint someone to a role with a focus"
       (should= (update-in sample-anchor-with-role
                           [:roles role-name] assoc :assignees
-                          [{:aname "george" :focus "cool stuff"}])
-        (g/appoint-to-role sample-anchor-with-role role-name "george"
-                           "cool stuff")))))
+                          {"george" "cool stuff"})
+        sample-anchor-with-assignee-with-focus)
+
+      (should= (update-in sample-anchor-with-role
+                          [:roles role-name] assoc :assignees
+                          {"george" "boring stuff"})
+        (g/appoint-to-role sample-anchor-with-assignee-with-focus
+                           role-name "george" "boring stuff")))))
 
 ;; Section 2.5
 (describe "Elected Roles"
