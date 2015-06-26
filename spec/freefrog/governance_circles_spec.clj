@@ -258,6 +258,24 @@
       (should= sample-with-one
         (removal-fn sample-with-two role-name second)))))
 
+;; Section 2.4
+(describe "Role Assignment"
+  (let [sample-anchor-with-assignee
+        (g/appoint-to-role sample-anchor-with-two-roles tester-role "larry")]
+    (it "can appoint someone to a role"
+      (should= (update-in sample-anchor-with-role
+                          [:roles role-name] assoc :assignees ["george"])
+        (g/appoint-to-role sample-anchor-with-role role-name
+                           "george"))
+
+      (should= (update-in sample-anchor-with-two-roles
+                          [:roles tester-role] assoc :assignees ["larry"])
+        sample-anchor-with-assignee)
+
+      (should= (update-in sample-anchor-with-assignee
+                          [:roles tester-role :assignees] conj "jane")
+        (g/appoint-to-role sample-anchor-with-assignee tester-role "jane")))))
+
 ;; Section 2.5
 (describe "Elected Roles"
   ;; Section 2.5.2

@@ -374,6 +374,9 @@
          {:rname           person-name
           :expiration-date expiration-date}))
 
+(defn appoint-to-role [circle role-name person-name]
+  (update-in circle [:roles role-name :assignees] conj person-name))
+
 ;; ## Role Collection Manipulation Functions ##
 ;; These functions are critical to maintaining namespace encapsulation. Simply
 ;; allowing an external actor to call directly into the "add-to-set" and

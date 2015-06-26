@@ -23,10 +23,13 @@
 
 (def sample-anchor (g/create-circle "Amazing Corp"))
 (def role-name "Programmer")
+(def tester-role "Tester")
 
 (def sample-purpose "Building awesome software")
 (def sample-anchor-with-role (g/add-role-to-circle sample-anchor role-name
                                                    sample-purpose))
+(def sample-anchor-with-two-roles
+  (g/add-role-to-circle sample-anchor-with-role tester-role))
 
 (defn my-add-policy
   ([circle name text]
