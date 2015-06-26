@@ -264,17 +264,25 @@
         (g/appoint-to-role sample-anchor-with-two-roles tester-role "larry")]
     (it "can appoint someone to a role"
       (should= (update-in sample-anchor-with-role
-                          [:roles role-name] assoc :assignees ["george"])
-        (g/appoint-to-role sample-anchor-with-role role-name
-                           "george"))
+                          [:roles role-name] assoc :assignees
+                          [{:aname "george"}])
+        (g/appoint-to-role sample-anchor-with-role role-name "george"))
 
       (should= (update-in sample-anchor-with-two-roles
-                          [:roles tester-role] assoc :assignees ["larry"])
+                          [:roles tester-role] assoc :assignees
+                          [{:aname "larry"}])
         sample-anchor-with-assignee)
 
       (should= (update-in sample-anchor-with-assignee
-                          [:roles tester-role :assignees] conj "jane")
-        (g/appoint-to-role sample-anchor-with-assignee tester-role "jane")))))
+                          [:roles tester-role :assignees] conj
+                          {:aname "jane"})
+        (g/appoint-to-role sample-anchor-with-assignee tester-role "jane")))
+    (it "can appoint someone to a role with a focus"
+      (should= (update-in sample-anchor-with-role
+                          [:roles role-name] assoc :assignees
+                          [{:aname "george" :focus "cool stuff"}])
+        (g/appoint-to-role sample-anchor-with-role role-name "george"
+                           "cool stuff")))))
 
 ;; Section 2.5
 (describe "Elected Roles"
