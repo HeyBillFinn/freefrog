@@ -303,15 +303,8 @@
         (g/unappoint-from-role sample-anchor-with-assignee tester-role
                                assignee-name)))
 
-    (it "won't appoint someone to a nonexistent role"
-      (should-throw IllegalArgumentException
-        "Role not found: Nonexistent"
-        (g/appoint-to-role sample-anchor-with-role "Nonexistent" "june")))
-
-    (it "won't appoint someone to a role with an empty name"
-      (should-throw IllegalArgumentException
-        "Role name may not be empty"
-        (g/appoint-to-role sample-anchor-with-role nil "june")))
+    (should-not-update-missing-or-empty-roles g/appoint-to-role
+      "role assignment" sample-anchor-with-role "june")
 
     (it "won't appoint nil to a role"
       (should-throw IllegalArgumentException
