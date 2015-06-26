@@ -259,16 +259,17 @@
         (removal-fn sample-with-two role-name second)))))
 
 ;; Section 2.4
-(describe "Role Assignment"
-  (let [assignee-name "larry"
-        focus-assignee-name "george"
-        sample-anchor-with-assignee
-        (g/appoint-to-role sample-anchor-with-two-roles tester-role
-                           assignee-name)
+(let [assignee-name "larry"
+      focus-assignee-name "george"
+      sample-anchor-with-assignee
+      (g/appoint-to-role sample-anchor-with-two-roles tester-role
+                         assignee-name)
 
-        sample-anchor-with-assignee-with-focus
-        (g/appoint-to-role sample-anchor-with-role role-name focus-assignee-name
-                           "cool stuff")]
+      sample-anchor-with-assignee-with-focus
+      (g/appoint-to-role sample-anchor-with-role role-name focus-assignee-name
+                         "cool stuff")]
+
+  (describe "Role Appointment"
     (it "can appoint someone to a role"
       (should= (update-in sample-anchor-with-role
                           [:roles role-name] assoc :assignees
@@ -300,7 +301,23 @@
     (it "can remove someone from a role"
       (should= sample-anchor-with-two-roles
         (g/unappoint-from-role sample-anchor-with-assignee tester-role
-                               assignee-name)))))
+                               assignee-name)))
+
+    (it "won't appoint someone to a nonexistent role"
+      (should-throw IllegalArgumentException
+        "Role not found: Nonexistent"
+        (g/appoint-to-role sample-anchor-with-role "Nonexistent" "june")))
+
+    (it "won't appoint someone to a role with an empty name"
+      (should-throw IllegalArgumentException
+        "Name may not be empty"
+        (g/appoint-to-role sample-anchor-with-role nil "june")))
+
+    (it "won't appoint nil to a role"
+      (should-throw IllegalArgumentException
+        "Name may not be empty"
+        (g/appoint-to-role sample-anchor-with-role role-name nil)))))
+
 
 ;; Section 2.5
 (describe "Elected Roles"

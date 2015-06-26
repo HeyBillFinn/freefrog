@@ -101,12 +101,12 @@
   (validate-not (role-missing? circle role-name)
                 (str "Role not found: " role-name)))
 
-(defn- validate-role-name [role-name]
+(defn- validate-name [role-name]
   (validate-not (empty? role-name) "Name may not be empty"))
 
 (defn- validate-role-updates [circle role-name]
   "Checks that the role name is not empty and that it exists in the circle."
-  (validate-role-name role-name)
+  (validate-name role-name)
   (validate-role-exists circle role-name))
 
 ;; ## Types ##
@@ -132,7 +132,7 @@
   RoleContainer
   (add-role [circle role]
     (let [new-role-name (:rname role)]
-      (validate-role-name new-role-name)
+      (validate-name new-role-name)
       (validate-not (get-in circle [:roles new-role-name])
                     (str "Role already exists: " new-role-name))
       (update-in circle [:roles] assoc new-role-name role)))
@@ -378,6 +378,8 @@
   ([circle role-name person-name]
    (appoint-to-role circle role-name person-name nil))
   ([circle role-name person-name focus]
+   (validate-role-updates circle role-name)
+   (validate-name person-name)
    (update-in circle [:roles role-name :assignees] assoc person-name focus)))
 
 (defn unappoint-from-role [circle role-name person-name]
