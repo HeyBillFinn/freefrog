@@ -1,3 +1,7 @@
 appoint "Joe Schmoe" to "Partner Matters" with focus "Contracts".
 
 appoint "Jill Schmidt" to "Accounting".
+
+appoint "Larry Badman" to "Partner Matters".
+
+unappoint "Larry Badman" from "Partner Matters".

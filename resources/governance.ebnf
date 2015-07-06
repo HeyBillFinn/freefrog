@@ -2,7 +2,7 @@
 govern = <"govern circle">, ws, name-list, <".">, cr, { cr }
 <block> = resolution | <comment>
 <resolution> = ( create | update | delete | convert | define | strike | elect |
-                 appoint),
+                 appoint | unappoint),
                <".">, { ws }
 create = <"create">, ws, entity, ws, name, [ws, <"with">, ws, create-components]
 update = <"update">, ws, entity, ws, name, ws, update-action-list
@@ -14,6 +14,7 @@ elect = <"elect">, ws, name, ws, <"as">, ws,
         #"\d{4}-\d{2}-\d{2}"
 appoint = <"appoint">, ws, name, ws, <"to">, ws, name, { ws, <"with focus">,
           ws, name }
+unappoint = <"unappoint">, ws, name, ws, <"from">, ws, name
 convert = <"convert">, ws, entity, ws, name, ws, <"into a">, ws, entity
 comment = <"--">, comment-text, cr, { cr }
 comment-text = #'[^\n]*'
