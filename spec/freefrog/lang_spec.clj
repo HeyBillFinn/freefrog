@@ -75,6 +75,7 @@
       (g/update-purpose "General public benefit")
       (g/add-role-to-circle "Partner Matters"
                             "Bringing in and making Partners happy")
+      (g/appoint-to-role "Partner Matters" "Joe Schmoe" "Contracts")
       (g/add-role-to-circle "Accounting"
                             "Spending money responsibly"
                             ["Checkbook", "Credit Cards"]
@@ -82,6 +83,7 @@
                              "Paying people"
                              "Reimbursing for expenses"
                              "Depositing income"])
+      (g/appoint-to-role "Accounting" "Jill Schmidt")
       (g/add-role-to-circle "Products"
                             "Building cool products to sell"
                             ["Products"]

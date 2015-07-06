@@ -1,0 +1,3 @@
+appoint "Joe Schmoe" to "Partner Matters" with focus "Contracts".
+
+appoint "Jill Schmidt" to "Accounting".

@@ -20,8 +20,8 @@ create role "Coaching People" with purpose
 "Providing coaching services to individuals"
 and domain "Coaching Services".
 
-appoint "Stephen Starkey" to "Coaching Services".
-appoint "Travis Marsh" to "Coaching Services".
+appoint "Stephen Starkey" to "Coaching People".
+appoint "Travis Marsh" to "Coaching People".
 
 define policy "Income from Services" as
 "Services income is moved to the service provider's account less a 5% fee

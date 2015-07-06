@@ -132,13 +132,19 @@
   (g/elect-to-role circle (elected-role-mapping (nth record 2))
                    (second record) (f/parse formatter (nth record 3))))
 
+(defn appoint [circle record _]
+  (if (= 4 (count record))
+    (g/appoint-to-role circle (nth record 2) (second record) (nth record 3))
+    (g/appoint-to-role circle (nth record 2) (second record))))
+
 (def commands {:create  modify-entity
                :delete  modify-entity
                :update  modify-entity
                :convert modify-entity
                :define  define-policy
                :strike  strike-policy
-               :elect   elect})
+               :elect   elect
+               :appoint appoint})
 
 (defn process-command
   "Execute the given governance transformation on the given
