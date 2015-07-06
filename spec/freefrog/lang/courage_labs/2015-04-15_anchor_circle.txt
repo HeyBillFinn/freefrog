@@ -1,9 +1,14 @@
 -- This initial meeting began with the election for the three cross-links
 -- defined in the Operating Agreement:
--- Stephen Starkey to the "Benefit Context Link" role expiring 2017-04-18.
--- Nate Riffe to the "Environmental Impact Context Link" role expiring
--- 2017-04-18.
--- Steve Mondozzi to the "Investor Context Link" role expiring 2017-04-18.
+
+appoint "Stephen Starkey" to "Benefit Context Link" with focus
+"Expires 2017-04-18".
+
+appoint "Nate Riffe" to "Environmental Impact Context Link" with focus
+"Expires 2017-04-18".
+
+appoint "Steve Mondozzi" to "Investor Context Link" with focus
+"Expires 2017-04-18".
 
 create role "Software Tools" with purpose
 "Coaching the world with Software Tools" and domain "Software".
@@ -15,8 +20,8 @@ create role "Coaching People" with purpose
 "Providing coaching services to individuals"
 and domain "Coaching Services".
 
--- We also appointed Stephen Starkey and Travis Marsh to the "Coaching Services"
--- role as an operational decision.
+appoint "Stephen Starkey" to "Coaching Services".
+appoint "Travis Marsh" to "Coaching Services".
 
 define policy "Income from Services" as
 "Services income is moved to the service provider's account less a 5% fee
@@ -30,8 +35,8 @@ and domain "Financial accounts" and accountabilities
 elect "Travis Marsh" as Secretary expiring 2015-10-18.
 elect "Stephen Starkey" as Facilitator expiring 2015-10-18.
 
--- We also appointed Stephen Starkey and Steve Mondozzi to the "Money
--- Matters" role as an operational decision.
+appoint "Stephen Starkey" to "Money Matters".
+appoint "Steve Mondozzi" to "Money Matters".
 
 define policy "Expenses" as "Member expenses by default come out of
 that Member's account.".
