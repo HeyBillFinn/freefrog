@@ -165,7 +165,8 @@
 
 (def ^:private sets-of-things {:domains          "Domain"
                                :accountabilities "Accountability"
-                               :policies         "Policy"})
+                               :policies         "Policy"
+                               :assignees        "Person"})
 
 (defn- validate-things
   "Abstract function to validate collections of things in a circle. The
@@ -384,7 +385,8 @@
    (update-in circle [:roles role-name :assignees] assoc person-name focus)))
 
 (defn unappoint-from-role [circle role-name person-name]
-  (validate-role-updates circle role-name)
+  (validate-things circle role-name :assignees person-name (comp not contains?)
+                   "%s '%s' is not in role '%s'")
   (remove-and-purge-from-role circle role-name :assignees dissoc person-name))
 
 ;; ## Role Collection Manipulation Functions ##

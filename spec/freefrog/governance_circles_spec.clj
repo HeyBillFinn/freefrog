@@ -23,7 +23,8 @@
   (:require [freefrog.governance :as g]
             [freefrog.governance-spec-helpers :refer :all]
             [speclj.core :refer :all]
-            [clj-time.core :as t]))
+            [clj-time.core :as t])
+  (:import (java.lang IllegalArgumentException)))
 
 (def sample-anchor-with-sample-policy
   (my-add-policy sample-anchor-with-role "test" "stuff"))
@@ -315,7 +316,13 @@
     (it "won't appoint nil to a role"
       (should-throw IllegalArgumentException
         "Person name may not be empty"
-        (g/appoint-to-role sample-anchor-with-role role-name nil)))))
+        (g/appoint-to-role sample-anchor-with-role role-name nil)))
+
+    (it "won't unappoint someone who wasn't in the role"
+      (should-throw IllegalArgumentException
+        (format "Person 'june' is not in role '%s'" tester-role)
+        (g/unappoint-from-role sample-anchor-with-assignee tester-role
+                               "june")))))
 
 
 ;; Section 2.5
