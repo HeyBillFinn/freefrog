@@ -304,7 +304,13 @@
                                assignee-name)))
 
     (should-not-update-missing-or-empty-roles g/appoint-to-role
-      "role assignment" sample-anchor-with-role "june")
+      "role assignment" "june")
+
+    (should-not-update-missing-or-empty-roles g/appoint-to-role
+      "role assignment" "june" "some focus")
+
+    (should-not-update-missing-or-empty-roles g/unappoint-from-role
+      "role unassignment" "june")
 
     (it "won't appoint nil to a role"
       (should-throw IllegalArgumentException

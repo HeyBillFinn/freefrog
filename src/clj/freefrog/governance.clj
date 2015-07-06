@@ -384,6 +384,7 @@
    (update-in circle [:roles role-name :assignees] assoc person-name focus)))
 
 (defn unappoint-from-role [circle role-name person-name]
+  (validate-role-updates circle role-name)
   (remove-and-purge-from-role circle role-name :assignees dissoc person-name))
 
 ;; ## Role Collection Manipulation Functions ##
