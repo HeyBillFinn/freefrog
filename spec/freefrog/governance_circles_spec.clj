@@ -291,13 +291,7 @@
       (should= (update-in sample-anchor-with-role
                           [:roles role-name] assoc :assignees
                           {focus-assignee-name "cool stuff"})
-        sample-anchor-with-assignee-with-focus)
-
-      (should= (update-in sample-anchor-with-role
-                          [:roles role-name] assoc :assignees
-                          {focus-assignee-name "boring stuff"})
-        (g/appoint-to-role sample-anchor-with-assignee-with-focus
-                           role-name focus-assignee-name "boring stuff")))
+        sample-anchor-with-assignee-with-focus))
 
     (it "can remove someone from a role"
       (should= sample-anchor-with-two-roles

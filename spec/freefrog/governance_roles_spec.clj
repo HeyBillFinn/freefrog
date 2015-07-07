@@ -57,6 +57,11 @@
         (should= expected
           (add-fn coll1 role-name val2))))
 
+    (it (str "won't add nil to a " type-str)
+      (should-throw IllegalArgumentException
+        (str type-str " name may not be empty")
+        (add-fn sample-anchor-with-role role-name nil)))
+
     (should-not-update-missing-or-empty-roles add-fn
       (str "adding a " type-str) val1)
 

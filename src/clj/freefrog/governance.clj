@@ -334,6 +334,7 @@
   (let [circle (add-role-if-missing circle role-name)]
     (validate-things circle role-name component thing contains?
                      "%s '%s' already exists on role '%s'")
+    (validate-name (sets-of-things component) thing)
     (update-in circle (role-path role-name) add-to-raw
                component empty-collection collection-op thing args)))
 
@@ -380,9 +381,7 @@
   ([circle role-name person-name]
    (appoint-to-role circle role-name person-name nil))
   ([circle role-name person-name focus]
-   (validate-role-updates circle role-name)
-   (validate-name "Person" person-name)
-   (update-in circle [:roles role-name :assignees] assoc person-name focus)))
+   (add-to-role circle role-name :assignees {} assoc person-name focus)))
 
 (defn unappoint-from-role [circle role-name person-name]
   (validate-things circle role-name :assignees person-name (comp not contains?)
