@@ -48,25 +48,25 @@
 (defn convert-role [anchor-circle {:keys [name]}]
   (g/convert-to-circle anchor-circle name))
 
-(defn update-purpose-conditionally [anchor-circle circle-name purpose]
+(defn update-purpose-conditionally [anchor-circle circle-name [purpose]]
   (if purpose
-    (g/update-role-purpose anchor-circle circle-name (first purpose))
+    (g/update-role-purpose anchor-circle circle-name purpose)
     anchor-circle))
 
-(defn rename-conditionally [anchor-circle old-name new-name]
+(defn rename-conditionally [anchor-circle old-name [new-name]]
   (if new-name
-    (g/rename-role anchor-circle old-name (first new-name))
+    (g/rename-role anchor-circle old-name new-name)
     anchor-circle))
 
 (def update-conversions {:accountabilities "accountability"
                          :domains          "domain"})
 
-(defn apply-collection-update [circle role-name update-type op]
-  (let [component (first op)
-        function-name (format "%s-role-%s"
+(defn apply-collection-update [circle role-name update-type
+                               [component & params]]
+  (let [function-name (format "%s-role-%s"
                               update-type (update-conversions component))
         fn (resolve (symbol "freefrog.governance" function-name))]
-    (reduce #(fn %1 role-name %2) circle (rest op))))
+    (reduce #(fn %1 role-name %2) circle params)))
 
 (defn apply-collection-updates [circle role-name update-type ops]
   (reduce #(apply-collection-update %1 role-name update-type %2) circle ops))
@@ -81,7 +81,7 @@
 
 (def update-circle update-role)
 
-(defn convert-to-pair
+(defn- convert-to-pair
   "Convert the given vector into a key/value pair. The first
    value of the vector is the first value, whereas the rest
    is the second value as a vector. Unless the key is :purpose,
@@ -102,12 +102,11 @@
            (RuntimeException.
              (format "Unable to execute governance record: %s " record) e)))))
 
-(defn modify-entity [circle record function-primary]
-  (let [function-secondary (first (second record))
-        function-name (format "%s-%s"
+(defn modify-entity [circle [_ [function-secondary] entity-name :as record]
+                     function-primary]
+  (let [function-name (format "%s-%s"
                               (name function-primary) (name function-secondary))
         fn (resolve (symbol "freefrog.lang" function-name))
-        entity-name (nth record 2)
         params (->> record
                     (drop 3)
                     (map convert-to-pair)
@@ -116,11 +115,11 @@
                     (merge {:name entity-name}))]
     (execute-governance-function record fn circle params)))
 
-(defn define-policy [circle record _]
-  (g/add-policy circle (second record) (nth record 2)))
+(defn define-policy [circle [_ policy-name policy-text] _]
+  (g/add-policy circle policy-name policy-text))
 
-(defn strike-policy [circle record _]
-  (g/remove-policy circle (second record)))
+(defn strike-policy [circle [_ policy-name] _]
+  (g/remove-policy circle policy-name))
 
 (def elected-role-mapping {"facilitator" g/facilitator-name
                            "secretary"   g/secretary-name
@@ -128,17 +127,15 @@
 
 (def formatter (f/formatter "yyyy-MM-dd"))
 
-(defn elect [circle record _]
-  (g/elect-to-role circle (elected-role-mapping (nth record 2))
-                   (second record) (f/parse formatter (nth record 3))))
+(defn elect [circle [_ person-name role-name expiration] _]
+  (g/elect-to-role circle (elected-role-mapping role-name)
+                   person-name (f/parse formatter expiration)))
 
-(defn appoint [circle record _]
-  (if (= 4 (count record))
-    (g/appoint-to-role circle (nth record 2) (second record) (nth record 3))
-    (g/appoint-to-role circle (nth record 2) (second record))))
+(defn appoint [circle [_ person-name role-name focus] _]
+  (g/appoint-to-role circle role-name person-name focus))
 
-(defn unappoint [circle record _]
-  (g/unappoint-from-role circle (nth record 2) (second record)))
+(defn unappoint [circle [_ person-name role-name] _]
+  (g/unappoint-from-role circle role-name person-name))
 
 (def commands {:create    modify-entity
                :delete    modify-entity
@@ -153,9 +150,8 @@
 (defn process-command
   "Execute the given governance transformation on the given
    circle, returning the new circle."
-  [circle record]
-  (let [function-primary (first record)
-        command (function-primary commands)]
+  [circle [function-primary :as record]]
+  (let [command (function-primary commands)]
     (if command
       (command circle record function-primary)
       (do
