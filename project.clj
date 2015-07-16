@@ -31,17 +31,17 @@
 
   :dependencies [[clj-http "1.1.2"]
                  [clj-json "0.5.3"]
-                 [clj-time "0.9.0"]
-                 [instaparse "1.4.0"]
-                 [org.clojure/clojure "1.6.0"]
+                 [clj-time "0.10.0"]
+                 [instaparse "1.4.1"]
+                 [org.clojure/clojure "1.7.0"]
                  [org.clojure/tools.logging "0.3.1"]
-                 [speclj "3.2.0"]]
+                 [speclj "3.3.1"]]
 
   :profiles {:uberjar {:aot :all}
              :dev {
                    :plugins [[lein-clojars "0.9.1"]]
                    :dependencies [[clj-yaml "0.4.0"]]}
-             :1.7 {:dependencies [[org.clojure/clojure "1.7.0-alpha4"]]}
+             :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
              :cli {:main freefrog.cli}}
 
   :plugins [[lein-ancient "0.6.7"]
@@ -53,5 +53,5 @@
   :test-paths ["spec"]
 
   :aliases {"autotest" ["spec" "-a"]
-            "docs" ["marg" "src" "spec"]
+            "docs" ["with-profile" "1.6" "marg" "src" "spec"]
             "cli" ["with-profile" "cli" "run"]})

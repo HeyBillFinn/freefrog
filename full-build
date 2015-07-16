@@ -1,7 +1,9 @@
 #!/bin/bash
 mkdir -p docs
 lein ancient > docs/ancient.txt
-lein kibit > docs/kibit.txt
+sed -i '' '/up-to-date/d' docs/ancient.txt
+./fail-if-nonempty docs/ancient.txt &&
+lein kibit > docs/kibit.txt &&
 ./fail-if-nonempty docs/kibit.txt &&
 lein bikeshed &&
 lein spec -f d -C > docs/specs.txt &&
