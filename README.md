@@ -18,6 +18,20 @@ Artifacts generated:
 
 ## Development
 
+The maintainers accept pull requests gratefully. You can submit whatever you 
+are inspired to submit and we promise to:
+
+ * Accept without changes, or
+ * Tell you what we would need in order to accept it.
+
+If you contribute enough we will probably invite you to become a committer.
+
+If you contribute even more we may invite you to become a partner in Courage Labs.
+
+If you'd like to see a list that the maintainers believe we should build next,
+you can visit [our Trello board](https://trello.com/b/NwocOwAv/freefrog). Don't
+feel limited by that list. We could be wrong!
+
 Running the specs once (SLOW):
 
     lein spec
