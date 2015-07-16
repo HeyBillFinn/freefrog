@@ -69,7 +69,7 @@ To see what the documentation looks like:
 
     lein docs && open docs/uberdoc.html
 
-## Running it locally (COMING SOON)
+## Running it locally (COMING SOON -- once we make this a real app again)
 
     lein freefrog
 
