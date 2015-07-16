@@ -18,11 +18,16 @@ Artifacts generated:
 
 ## Development
 
+### Getting Started
+
 Note: we all use Macs, so some commands in here (like "open") may not work
-on our linux machine unless you've aliased them. Also, you'll need 
-[Homebrew](http://brew.sh/) so you can:
+on our linux machine unless you've aliased them. 
+
+Also, you'll need [Homebrew](http://brew.sh/) so you can:
 
     brew install gnu-sed
+
+### Contributing
 
 The maintainers accept pull requests gratefully. You can submit whatever you 
 are inspired to submit and we promise to:
@@ -38,6 +43,12 @@ If you'd like to see a list that the maintainers believe we should build next,
 you can visit [our Trello board](https://trello.com/b/NwocOwAv/freefrog). Don't
 feel limited by that list. We could be wrong!
 
+**Before submitting a pull request** run:
+
+    ./full-build
+
+### Various commands
+
 Running the specs once (SLOW):
 
     lein spec
@@ -49,10 +60,6 @@ Or autotest (SLOW to start, then FAST to develop):
 To see what the documentation looks like:
 
     lein docs && open docs/uberdoc.html
-
-**Before submitting a pull request** run:
-
-    ./full-build
 
 This will run the same stuff our continuous integration server runs. This way, 
 you can know if you broke the build BEFORE your code makes it into master,
