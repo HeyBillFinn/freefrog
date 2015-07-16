@@ -19,7 +19,10 @@ Artifacts generated:
 ## Development
 
 Note: we all use Macs, so some commands in here (like "open") may not work
-on our linux machine unless you've aliased them.
+on our linux machine unless you've aliased them. Also, you'll need 
+[Homebrew](http://brew.sh/) so you can:
+
+    brew install gnu-sed
 
 The maintainers accept pull requests gratefully. You can submit whatever you 
 are inspired to submit and we promise to:
