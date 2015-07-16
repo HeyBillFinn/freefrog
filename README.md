@@ -69,11 +69,11 @@ To see what the documentation looks like:
 
     lein docs && open docs/uberdoc.html
 
-## Running it locally
+## Running it locally (COMING SOON)
 
     lein freefrog
 
-## Operating using Docker
+## Operating using Docker (COMING SOON)
 
 Docker is our preferred approach for operating Freefrog. An example file
 can be found in the root:
