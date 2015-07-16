@@ -47,6 +47,14 @@ feel limited by that list. We could be wrong!
 
     ./full-build
 
+This will run the same stuff our continuous integration server runs. This way, 
+you can know if you broke the build BEFORE your code makes it into master,
+keeping everything nice and clean.
+
+What to do if ancient.txt is not empty:
+
+    lein ancient upgrade :no-tests && git add project.clj && ./full-build
+
 ### Various commands
 
 Running the specs once (SLOW):
@@ -60,14 +68,6 @@ Or autotest (SLOW to start, then FAST to develop):
 To see what the documentation looks like:
 
     lein docs && open docs/uberdoc.html
-
-This will run the same stuff our continuous integration server runs. This way, 
-you can know if you broke the build BEFORE your code makes it into master,
-keeping everything nice and clean.
-
-What to do if ancient.txt is not empty:
-
-    lein ancient upgrade :no-tests && git add project.clj && ./full-build
 
 ## Running it locally
 
